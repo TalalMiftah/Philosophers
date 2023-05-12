@@ -75,15 +75,44 @@ void	u_sleep(long long r)
 	
 	current = current_time();
 	while (current_time() < r + current)
-		usleep(100);
+		usleep(400);
 }
 
 void    message_t(unsigned long long i, int index, char *str, t_est *philo)
 {
     pthread_mutex_lock(&philo->phi->print);
     printf("%lld\t%d\t%s\n", current_time() - i, index, str);
+    pthread_mutex_lock(&philo->phi->dea);
     if(philo->d == 0)
+    {
+        pthread_mutex_unlock(&philo->phi->dea);
         pthread_mutex_unlock(&philo->phi->print);
+        return ;
+    }
+    pthread_mutex_unlock(&philo->phi->dea);
+}
+
+int yak_akhoya_marwan(t_philo *philo)
+{
+    t_est *h = philo->head;
+
+    while (1)
+	{
+		pthread_mutex_lock(&h->phi->death);
+		if ((current_time() - h->last_meal > h->phi->time_to_die))
+		{
+			pthread_mutex_lock(&h->phi->dea);
+			h->d = 1;
+            h->phi->d1 = 1;
+			pthread_mutex_unlock(&h->phi->dea);
+			message_t(philo->start, h->index, "is died", h);
+			pthread_mutex_unlock(&h->phi->death);
+			return (0);
+		}
+		pthread_mutex_unlock(&h->phi->death);
+		h = h->next;
+	}
+    return (1);
 }
 
 void    *routine(void *point)
@@ -95,23 +124,21 @@ void    *routine(void *point)
 	while (h->d == 0)
 	{
 		pthread_mutex_lock(&h->fork_t);
-		message_t(h->phi->start, h->index, "has take a fork", h);
-        
+		message_t(h->phi->start, h->index, "has take a fork", h);        
 		pthread_mutex_lock(&h->next->fork_t);
 		message_t(h->phi->start, h->index, "has take a fork", h);
-        
 		message_t(h->phi->start, h->index, "is eating", h);
+        // if (yak_akhoya_marwan(h->phi) == 0)
+        //     break ;
         pthread_mutex_lock(&h->phi->death);
-        
 		h->last_meal = current_time();
-        
         pthread_mutex_unlock(&h->phi->death);
-        
 		u_sleep(h->phi->time_to_eat);
-        
 		pthread_mutex_unlock(&h->next->fork_t);
 		pthread_mutex_unlock(&h->fork_t);
 		message_t(h->phi->start, h->index, "is sleeping", h);
+        // if (yak_akhoya_marwan(h->phi) == 0)
+        //     break ;
 		u_sleep(h->phi->time_to_sleep);
 		message_t(h->phi->start, h->index, "is thinking", h);
 	}

@@ -77,6 +77,7 @@ void	ft_parsing(char **av, t_philo *philo)
 
 int	initial(t_philo *philo, char **str)
 {
+	philo->d1 = 0;
 	philo->time_to_die = ft_atoi(str[2]);
 	philo->time_to_eat = ft_atoi(str[3]);
 	philo->time_to_sleep = ft_atoi(str[4]);
@@ -109,24 +110,35 @@ int	main(int ac, char **av)
 	{
 		h->last_meal = current_time();
 		pthread_create(&h->philo_id, NULL, routine, h);
-		pthread_detach(h->philo_id);
+		// pthread_detach(h->philo_id);
 		h = h->next;
 		if (h == philo.head)
 			break ;
 	}
-	while (1)
+	while (h)
 	{
-		pthread_mutex_lock(&h->phi->death);
-		if ((current_time() - h->last_meal > h->phi->time_to_die))
-		{
-			// pthread_mutex_lock(&h->phi->dea);
-			h->d = 1;
-			// pthread_mutex_unlock(&h->phi->dea);
-			message_t(philo.start, h->index, "is died", h);
-			return (0);
-		}
-		pthread_mutex_unlock(&h->phi->death);
+		if (yak_akhoya_marwan(h->phi) == 0)
+			return (1);
+		pthread_join(h->philo_id, NULL);
 		h = h->next;
+		if (h == philo.head)
+			break ;
 	}
+	
+	// while (1)
+	// {
+	// 	pthread_mutex_lock(&h->phi->death);
+	// 	if ((current_time() - h->last_meal > h->phi->time_to_die))
+	// 	{
+	// 		pthread_mutex_lock(&h->phi->dea);
+	// 		h->d = 1;
+	// 		pthread_mutex_unlock(&h->phi->dea);
+	// 		message_t(philo.start, h->index, "is died", h);
+	// 		pthread_mutex_unlock(&h->phi->death);
+	// 		return (0);
+	// 	}
+	// 	pthread_mutex_unlock(&h->phi->death);
+	// 	h = h->next;
+	// }
 	return (0);
 }

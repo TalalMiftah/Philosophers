@@ -36,6 +36,7 @@ typedef		struct philo
 {
 	t_est					*head;
 	long long		start;
+	unsigned int		d1;
 	int						i;
 	int						j;
 	long long		time_to_die;
@@ -51,6 +52,8 @@ typedef		struct philo
 
 
 int			ft_atoi(const char *str);
+int yak_akhoya_marwan(t_philo *philo);
+int normi(t_philo *philo);
 void		ft_parsing(char **av, t_philo *philo);
 void		ft_error(void);
 void		ft_lstadd_back(t_est **l, t_est *new);
