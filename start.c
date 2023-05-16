@@ -80,15 +80,11 @@ void	u_sleep(long long r)
 
 void    message_t(unsigned long long i, int index, char *str, t_est *philo)
 {
+    pthread_mutex_lock(&philo->phi->dea);
     pthread_mutex_lock(&philo->phi->print);
     printf("%lld\t%d\t%s\n", current_time() - i, index, str);
-    pthread_mutex_lock(&philo->phi->dea);
     if(philo->d == 0)
-    {
-        pthread_mutex_unlock(&philo->phi->dea);
         pthread_mutex_unlock(&philo->phi->print);
-        return ;
-    }
     pthread_mutex_unlock(&philo->phi->dea);
 }
 

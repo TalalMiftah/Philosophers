@@ -110,20 +110,20 @@ int	main(int ac, char **av)
 	{
 		h->last_meal = current_time();
 		pthread_create(&h->philo_id, NULL, routine, h);
-		// pthread_detach(h->philo_id);
+		pthread_detach(h->philo_id);
 		h = h->next;
 		if (h == philo.head)
 			break ;
 	}
-	while (h)
-	{
 		if (yak_akhoya_marwan(h->phi) == 0)
 			return (1);
-		pthread_join(h->philo_id, NULL);
-		h = h->next;
-		if (h == philo.head)
-			break ;
-	}
+	// while (h)
+	// {
+	// 	pthread_join(h->philo_id, NULL);
+	// 	h = h->next;
+	// 	if (h == philo.head)
+	// 		break ;
+	// }
 	
 	// while (1)
 	// {
